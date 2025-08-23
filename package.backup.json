@@ -1,0 +1,23 @@
+{
+  "name": "expo-app",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "bunx rork start -p jcmx8rybax2tm40m6bc8d --tunnel",
+    "start-web": "bunx rork start -p jcmx8rybax2tm40m6bc8d --web --tunnel",
+    "start-web-dev": "DEBUG=expo* bunx rork start -p jcmx8rybax2tm40m6bc8d --web --tunnel",
+    "lint": "expo lint"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@expo/ngrok": "^4.1.0",
+    "@types/react": "~19.0.10",
+    "eslint": "^9.31.0",
+    "eslint-config-expo": "^9.2.0",
+    "react-native-web": {},
+    "typescript": "~5.8.3"
+  },
+  "private": true,
+  "overrides": {},
+  "resolutions": {}
+}

@@ -1,29 +1,77 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect } from 'react';
+import 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { theme } from '@/constants/theme';
+import { AIAssistantProvider } from '@/hooks/ai-assistant-context';
+import { AuthProvider } from '@/hooks/auth-context';
+import { EventsProvider } from '@/hooks/events-context';
+import { VotesProvider } from '@/hooks/votes-context';
+
+
+SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
+
+function RootLayoutNav() {
+  return (
+    <Stack 
+      screenOptions={{ 
+        headerBackTitle: "Back",
+        headerStyle: {
+          backgroundColor: theme.colors.background,
+        },
+        headerTintColor: theme.colors.text,
+        contentStyle: {
+          backgroundColor: theme.colors.background,
+        },
+        // Плавные переходы между экранами
+        animation: 'slide_from_right',
+        animationDuration: 300,
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+      }}
+    >
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="event/[id]" options={{ 
+        title: "Event",
+        presentation: "modal",
+      }} />
+      <Stack.Screen name="create-event" options={{ 
+        title: "Create Event",
+        presentation: "modal",
+      }} />
+      <Stack.Screen name="organizer" options={{ 
+        title: "Organizer Panel",
+        presentation: "modal",
+      }} />
+    </Stack>
+  );
+}
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+  useEffect(() => {
+    SplashScreen.hideAsync();
+  }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <EventsProvider>
+          <VotesProvider>
+            <AIAssistantProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <RootLayoutNav />
+              </GestureHandlerRootView>
+            </AIAssistantProvider>
+          </VotesProvider>
+        </EventsProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
+
 }
